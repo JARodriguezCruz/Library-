@@ -1,0 +1,81 @@
+
+-- ----------------------------
+-- Tabla: autor
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS autor (
+    id         INT AUTO_INCREMENT PRIMARY KEY,
+    nombre     VARCHAR(100) NOT NULL,
+    apellido   VARCHAR(100) NOT NULL,
+    biografia  TEXT
+);
+
+-- ----------------------------
+-- Tabla: biblioteca
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS biblioteca (
+    id        INT AUTO_INCREMENT PRIMARY KEY,
+    nombre    VARCHAR(200) NOT NULL,
+    direccion VARCHAR(300),
+    telefono  VARCHAR(20)
+);
+
+-- ----------------------------
+-- Tabla: libro
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS libro (
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    titulo      VARCHAR(300)  NOT NULL,
+    autor_id    INT           NOT NULL,
+    anio        INT,
+    isbn        VARCHAR(30)   NOT NULL UNIQUE,
+    disponible  TINYINT(1)    NOT NULL DEFAULT 1,
+    CONSTRAINT fk_libro_autor FOREIGN KEY (autor_id) REFERENCES autor(id)
+        ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- ----------------------------
+-- Tabla: usuario
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS usuario (
+    id       INT AUTO_INCREMENT PRIMARY KEY,
+    nombre   VARCHAR(150) NOT NULL,
+    email    VARCHAR(200) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL
+);
+
+-- ----------------------------
+-- Tabla: prestamo  (relación usuario ↔ libro)
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS prestamo (
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id  INT  NOT NULL,
+    libro_id    INT  NOT NULL,
+    fecha_prestamo DATE NOT NULL,
+    fecha_devolucion DATE,
+    CONSTRAINT fk_prestamo_usuario FOREIGN KEY (usuario_id) REFERENCES usuario(id),
+    CONSTRAINT fk_prestamo_libro   FOREIGN KEY (libro_id)   REFERENCES libro(id)
+);
+
+
+=========================================================================
+
+// Datos para las Tablas
+
+-- AUTORES
+INSERT INTO autor (nombre, apellido, biografia) VALUES
+('Gabriel', 'García Márquez', 'Autor colombiano, Nobel de Literatura'),
+('Mario', 'Vargas Llosa', 'Autor peruano, Nobel de Literatura'),
+('Julio', 'Cortázar', 'Autor argentino del boom latinoamericano');
+
+-- LIBROS
+INSERT INTO libro (titulo, autor_id, anio, isbn, disponible) VALUES
+('Cien años de soledad', 1, 1967, 'ISBN-001', true),
+('El amor en los tiempos del cólera', 1, 1985, 'ISBN-002', true),
+('La ciudad y los perros', 2, 1963, 'ISBN-003', true),
+('Rayuela', 3, 1963, 'ISBN-004', true);
+
+-- USUARIOS
+INSERT INTO usuario (nombre, email, password) VALUES
+('Juan Pérez', 'juan@mail.com', '1234'),
+('Ana Torres', 'ana@mail.com', '1234'),
+('Carlos López', 'carlos@mail.com', '1234');
